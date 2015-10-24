@@ -1,4 +1,26 @@
 This script automate creation of Conda environments for Python projects.
 It expects to be launched from the project's root directory,
-and it expects it to contain an "environment" directory with Conda environment
-definitions (e.g. "dev.yaml").
+and it expects it to contain a "requirements" directory with pip requirements
+and Conda environment definitions.
+
+Sample structure:
+
+    requirements/
+        pip/
+            dev.txt
+            prod.txt
+        conda/
+            dev.yml
+            prod.yml
+
+Usage:
+
+    $ cd /path/to/project/root
+
+    # Create a dev environment for the project
+    # In this example, this will create a "root-dev" conda environment.
+    $ /path/to/build-conda-project-env.sh
+
+    # Create a prod environment for the project
+    # In this example, this will create a "root-prod" conda environment.
+    $ /path/to/build-conda-project-env.sh prod

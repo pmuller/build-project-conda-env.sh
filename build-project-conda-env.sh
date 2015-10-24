@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-#
-# Usage: /path/to/build_conda_env.sh <env type> [project name]
 
 set -eux
 
@@ -45,11 +43,19 @@ if [ ! -d $MINICONDA_INSTALL_PATH ]
 then
     $MINICONDA_INSTALLER_PATH -b -p $MINICONDA_INSTALL_PATH
 fi
+
 # Create Conda environment if missing
 if [ ! -d $MINICONDA_INSTALL_PATH/envs/$ENV_NAME ]
 then
     $CONDA_PATH create -y -n $ENV_NAME python=$PYTHON_VERSION
 fi
+
 # Ensure the environment matches the environment description
-$CONDA_PATH env update -n $ENV_NAME -f $CONDA_REQUIREMENTS_DIR/$ENV_TYPE.yml
-$CONDA_PATH run -n $ENV_NAME -- pip install -r $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt
+if [ -f $CONDA_REQUIREMENTS_DIR/$ENV_TYPE.yml ]
+then
+    $CONDA_PATH env update -n $ENV_NAME -f $CONDA_REQUIREMENTS_DIR/$ENV_TYPE.yml
+fi
+if [ -f $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt ]
+then
+    $CONDA_PATH run -n $ENV_NAME -- pip install -r $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt
+fi
