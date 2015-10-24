@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 #
 # Usage: /path/to/build_conda_env.sh <env type> [project name]
-#
-# This script creates conda environment.
-# It must be launched from the project's root directory.
-# It expects to find there an "environments" directory,
-# containing Conda environment YAML files.
-# If the project name is not given,
-# it uses the base name of the project directory.
-#
-# env type can be "dev" or "prod".
 
 set -eux
 
@@ -17,7 +8,8 @@ MINICONDA_VERSION=${MINICONDA_VERSION-latest}
 MINICONDA_ARCH=${MINICONDA_ARCH-x86_64}
 MINICONDA_OS=${MINICONDA_OS-Linux}
 PROJECT_DIRECTORY=${PROJECT_DIRECTORY-$PWD}
-YAML_DIR=${YAML_DIR-$PROJECT_DIRECTORY/environments}
+CONDA_REQUIREMENTS_DIR=${CONDA_REQUIREMENTS_DIR-$PROJECT_DIRECTORY/requirements/conda}
+PIP_REQUIREMENTS_DIR=${CONDA_REQUIREMENTS_DIR-$PROJECT_DIRECTORY/requirements/pip}
 
 ENV_TYPE=$1
 PROJECT_NAME=${2-$(basename $PROJECT_DIRECTORY)}
@@ -59,9 +51,5 @@ then
     $CONDA_PATH create -y -n $ENV_NAME python=$PYTHON_VERSION
 fi
 # Ensure the environment matches the environment description
-$CONDA_PATH env update -n $ENV_NAME -f $YAML_DIR/$ENV_TYPE.yml
-# In dev environment, the project should be installed in development mode
-if [ $ENV_TYPE == "dev" ]
-then
-    $CONDA_PATH run -n $ENV_NAME -- pip install -e $PROJECT_DIRECTORY
-fi
+$CONDA_PATH env update -n $ENV_NAME -f $CONDA_REQUIREMENTS_DIR/$ENV_TYPE.yml
+$CONDA_PATH run -n $ENV_NAME -- pip install -r $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt
