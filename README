@@ -1,0 +1,4 @@
+This script automate creation of Conda environments for Python projects.
+It expects to be launched from the project's root directory,
+and it expects it to contain an "environment" directory with Conda environment
+definitions (e.g. "dev.yaml").
