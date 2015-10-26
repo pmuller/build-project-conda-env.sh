@@ -30,7 +30,6 @@ MINICONDA_BASENAME=$MINICONDA_NAME-$MINICONDA_VERSION-$MINICONDA_OS-$MINICONDA_A
 MINICONDA_INSTALLER_FILENAME=$MINICONDA_BASENAME.sh
 MINICONDA_INSTALLER_PATH=/tmp/$MINICONDA_BASENAME-$(id -u).sh
 MINICONDA_INSTALLER_URL=https://repo.continuum.io/miniconda/$MINICONDA_INSTALLER_FILENAME
-CONDA_PATH=$MINICONDA_INSTALL_PATH/bin/conda
 
 # Conda does not handle prefixes longer than 128 characters.
 # If using a longer prefix, use /tmp
@@ -40,6 +39,8 @@ then
     MINICONDA_INSTALL_PATH=/tmp/$MINICONDA_BASENAME-$(id -u)
     echo "Using $MINICONDA_INSTALL_PATH"
 fi
+
+CONDA_PATH=$MINICONDA_INSTALL_PATH/bin/conda
 
 # Download the installer if not done previously
 if [ ! -f $MINICONDA_INSTALLER_PATH ]
