@@ -9,38 +9,29 @@ MINICONDA_OS=${MINICONDA_OS-Linux}
 PROJECT_DIRECTORY=${PROJECT_DIRECTORY-$PWD}
 CONDA_REQUIREMENTS_DIR=${CONDA_REQUIREMENTS_DIR-$PROJECT_DIRECTORY/requirements/conda}
 PIP_REQUIREMENTS_DIR=${PIP_REQUIREMENTS_DIR-$PROJECT_DIRECTORY/requirements/pip}
-HOME_DIR=${HOME-$PWD}
 
 ENV_TYPE=${1-dev}
 PROJECT_NAME=${2-$(basename $PROJECT_DIRECTORY)}
 PYTHON_VERSION=${3-2.7.10}
 
+# Choose a Conda installer based on the requested Python version
 PYTHON_MAJOR_VERSION=$(echo $PYTHON_VERSION | cut -d. -f1)
 if [ $PYTHON_MAJOR_VERSION -eq 2 ]
 then
     MINICONDA_NAME=Miniconda
-    MINICONDA_INSTALL_PATH=$HOME_DIR/.conda2
 elif [ $PYTHON_MAJOR_VERSION -eq 3 ]
 then
     MINICONDA_NAME=Miniconda3
-    MINICONDA_INSTALL_PATH=$HOME_DIR/.conda3
+else
+    echo "Invalid python version: $PYTHON_VERSION" >&2
+    exit -1
 fi
 
 ENV_NAME=$PROJECT_NAME-$ENV_TYPE
+MINICONDA_INSTALL_PATH=${HOME-.}/.conda
 MINICONDA_BASENAME=$MINICONDA_NAME-$MINICONDA_VERSION-$MINICONDA_OS-$MINICONDA_ARCH
-MINICONDA_INSTALLER_FILENAME=$MINICONDA_BASENAME.sh
 MINICONDA_INSTALLER_PATH=$TMPDIR/$MINICONDA_BASENAME-$(id -u).sh
-MINICONDA_INSTALLER_URL=https://repo.continuum.io/miniconda/$MINICONDA_INSTALLER_FILENAME
-
-# Conda does not handle prefixes longer than 128 characters.
-# If using a longer prefix, use $TMPDIR
-if [ $(echo $MINICONDA_INSTALL_PATH | wc -c) -ge 128 ]
-then
-    echo "Prefix $MINICONDA_INSTALL_PATH is too long for Conda"
-    MINICONDA_INSTALL_PATH=$TMPDIR/$MINICONDA_BASENAME-$(id -u)
-    echo "Using $MINICONDA_INSTALL_PATH"
-fi
-
+MINICONDA_INSTALLER_URL=https://repo.continuum.io/miniconda/$MINICONDA_INSTALLER_FILENAME.sh
 CONDA_PATH=$MINICONDA_INSTALL_PATH/bin/conda
 
 # Download the installer if not done previously
