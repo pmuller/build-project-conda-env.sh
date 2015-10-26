@@ -31,7 +31,7 @@ ENV_NAME=$PROJECT_NAME-$ENV_TYPE
 MINICONDA_INSTALL_PATH=${HOME-.}/.conda
 MINICONDA_BASENAME=$MINICONDA_NAME-$MINICONDA_VERSION-$MINICONDA_OS-$MINICONDA_ARCH
 MINICONDA_INSTALLER_PATH=$TMPDIR/$MINICONDA_BASENAME-$(id -u).sh
-MINICONDA_INSTALLER_URL=https://repo.continuum.io/miniconda/$MINICONDA_INSTALLER_FILENAME.sh
+MINICONDA_INSTALLER_URL=https://repo.continuum.io/miniconda/$MINICONDA_BASENAME.sh
 CONDA_PATH=$MINICONDA_INSTALL_PATH/bin/conda
 
 # Download the installer if not done previously
@@ -53,11 +53,13 @@ then
     $CONDA_PATH create -y -n $ENV_NAME python=$PYTHON_VERSION
 fi
 
-# Ensure the environment matches the environment description
+# Ensure the environment honors Conda requirements
 if [ -f $CONDA_REQUIREMENTS_DIR/$ENV_TYPE.yml ]
 then
     $CONDA_PATH env update -n $ENV_NAME -f $CONDA_REQUIREMENTS_DIR/$ENV_TYPE.yml
 fi
+
+# Ensure the environment honors pip requirements
 if [ -f $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt ]
 then
     $CONDA_PATH run -n $ENV_NAME -- pip install -r $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt
