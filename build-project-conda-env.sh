@@ -9,6 +9,7 @@ MINICONDA_OS=${MINICONDA_OS-Linux}
 PROJECT_DIRECTORY=${PROJECT_DIRECTORY-$PWD}
 CONDA_REQUIREMENTS_DIR=${CONDA_REQUIREMENTS_DIR-$PROJECT_DIRECTORY/requirements/conda}
 PIP_REQUIREMENTS_DIR=${PIP_REQUIREMENTS_DIR-$PROJECT_DIRECTORY/requirements/pip}
+PIP_INSTALL_OPTIONS=${PIP_INSTALL_OPTIONS-"--no-binary :all:"}
 
 ENV_TYPE=${1-dev}
 PROJECT_NAME=${2-$(basename $PROJECT_DIRECTORY)}
@@ -62,5 +63,7 @@ fi
 # Ensure the environment honors pip requirements
 if [ -f $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt ]
 then
-    $CONDA_PATH run -n $ENV_NAME -- pip install -r $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt
+    $CONDA_PATH run -n $ENV_NAME -- \
+        pip install $PIP_INSTALL_OPTIONS \
+                    -r $PIP_REQUIREMENTS_DIR/$ENV_TYPE.txt
 fi
